@@ -20,7 +20,6 @@ export default function BasicTable() {
   }, [dispatch]);
 
   const getUsersState = useSelector((state) => {
-    console.log(state);
     return state?.getUsers;
   });
   const handleEditClick = (id) => {
@@ -65,6 +64,8 @@ export default function BasicTable() {
             <TableCell align="left">First Name&nbsp;</TableCell>
             <TableCell align="left">Last Name&nbsp;</TableCell>
             <TableCell align="left">Avatar Link&nbsp;</TableCell>
+            <TableCell align="left">Edit&nbsp;</TableCell>
+            <TableCell align="left">Delete&nbsp;</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
