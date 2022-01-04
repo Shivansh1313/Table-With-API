@@ -10,24 +10,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getUsers, setUsers } from './redux/Actions/Actions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 
 export default function BasicTable() {
   const dispatch = useDispatch();
+  const [editButtonFlag, setEditButtonFlag] = React.useState();
   const [currentEditObject, setCurrentEditObject] = React.useState({});
   React.useEffect(() => {
     dispatch(getUsers());
-  }, []);
+  }, [dispatch]);
 
   const getUsersState = useSelector((state) => {
     console.log(state);
@@ -35,8 +25,17 @@ export default function BasicTable() {
   });
   const handleEditClick = (id) => {
     if (id === currentEditObject?.id) {
+      let temp = getUsersState?.tableData.map((obj) => {
+        if (obj.id === id) {
+          return currentEditObject;
+        }
+        return obj;
+      });
+      setEditButtonFlag({});
+      dispatch(setUsers(temp));
       setCurrentEditObject({});
     } else {
+      setEditButtonFlag({ value: 'Submit', id });
       getUsersState.tableData.forEach((item) => {
         if (item.id === id) {
           setCurrentEditObject(item);
@@ -130,7 +129,10 @@ export default function BasicTable() {
               </TableCell>
 
               <TableCell align="left">
-                <Button onClick={() => handleEditClick(row.id)}> Edit</Button>
+                <Button onClick={() => handleEditClick(row.id)}>
+                  {' '}
+                  {editButtonFlag?.id === row.id ? 'Submit' : 'Edit'}
+                </Button>
               </TableCell>
               <TableCell align="left">
                 <Button onClick={() => handleDeleteClick(row.id)}>
