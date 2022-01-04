@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUsers, setUsers } from './redux/Actions/Actions';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
@@ -23,6 +24,7 @@ const rows = [
 
 export default function BasicTable() {
   const dispatch = useDispatch();
+  const [currentEditObject, setCurrentEditObject] = React.useState({});
   React.useEffect(() => {
     dispatch(getUsers());
   }, []);
@@ -31,7 +33,17 @@ export default function BasicTable() {
     console.log(state);
     return state?.getUsers;
   });
-  const handleEditClick = () => {};
+  const handleEditClick = (id) => {
+    if (id === currentEditObject?.id) {
+      setCurrentEditObject({});
+    } else {
+      getUsersState.tableData.forEach((item) => {
+        if (item.id === id) {
+          setCurrentEditObject(item);
+        }
+      });
+    }
+  };
 
   const handleDeleteClick = (id) => {
     const temp = getUsersState.tableData.filter((item) => {
@@ -40,6 +52,9 @@ export default function BasicTable() {
     dispatch(setUsers(temp));
 
     return temp;
+  };
+  const handleTextBoxChange = (e, type) => {
+    setCurrentEditObject({ ...currentEditObject, [type]: e.target.value });
   };
   return (
     <TableContainer component={Paper}>
@@ -60,10 +75,60 @@ export default function BasicTable() {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell align="left">{row.id}</TableCell>
-              <TableCell align="left">{row.email}</TableCell>
-              <TableCell align="left">{row.first_name}</TableCell>
-              <TableCell align="left">{row.last_name}</TableCell>
-              <TableCell align="left">{row.avatar}</TableCell>
+              <TableCell align="left">
+                {currentEditObject?.id === row.id ? (
+                  <TextField
+                    id="outlined-basic"
+                    label="Email"
+                    variant="outlined"
+                    defaultValue={row.email}
+                    onKeyUp={(e) => handleTextBoxChange(e, 'email')}
+                  />
+                ) : (
+                  row.email
+                )}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {currentEditObject?.id === row.id ? (
+                  <TextField
+                    id="outlined-basic"
+                    label="First Name"
+                    variant="outlined"
+                    defaultValue={row.first_name}
+                    onKeyUp={(e) => handleTextBoxChange(e, 'first_name')}
+                  />
+                ) : (
+                  row.first_name
+                )}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {currentEditObject?.id === row.id ? (
+                  <TextField
+                    id="outlined-basic"
+                    label="Last Name"
+                    variant="outlined"
+                    defaultValue={row.last_name}
+                    onKeyUp={(e) => handleTextBoxChange(e, 'last_name')}
+                  />
+                ) : (
+                  row.last_name
+                )}
+              </TableCell>
+
+              <TableCell component="th" scope="row">
+                {currentEditObject?.id === row.id ? (
+                  <TextField
+                    id="outlined-basic"
+                    label="Link"
+                    variant="outlined"
+                    defaultValue={row.avatar}
+                    onKeyUp={(e) => handleTextBoxChange(e, 'avatar')}
+                  />
+                ) : (
+                  row.avatar
+                )}
+              </TableCell>
+
               <TableCell align="left">
                 <Button onClick={() => handleEditClick(row.id)}> Edit</Button>
               </TableCell>
